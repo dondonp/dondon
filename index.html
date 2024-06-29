@@ -5,30 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>軸受点検写真記録アプリ</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --button-hover-color: #2980b9;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
-        #cameraButton, #editListButton, #saveButton {
-            font-size: 18px;
-            padding: 10px 20px;
+        
+        button {
+            font-size: 16px;
+            padding: 12px 24px;
             margin-bottom: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+        
+        button:hover {
+            background-color: var(--button-hover-color);
+        }
+        
         #previewContainer {
             position: relative;
             max-width: 100%;
             max-height: 70vh;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
         }
+        
         #previewImage {
             max-width: 100%;
             max-height: 70vh;
+            display: block;
         }
+        
         #overlay {
             position: fixed;
             top: 0;
@@ -40,38 +67,82 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            overflow-y: auto;
         }
+        
         #listEditor {
             background-color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 30px;
+            border-radius: 15px;
             width: 80%;
             max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        
         #nameList {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(255,255,255,0.7);
-            padding: 10px;
-            border-radius: 5px;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 10px;
             z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        #listItems {
-            width: 100%;
-            margin-bottom: 10px;
+        
+        #commonNumberInput {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
         }
+        
         .listItem {
             display: flex;
-            margin-bottom: 5px;
+            align-items: center;
+            margin-bottom: 10px;
         }
+        
         .listItem input {
             flex-grow: 1;
-            margin-right: 5px;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
         }
-        #commonNumberInput {
+        
+        .removeItemButton {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .removeItemButton:hover {
+            background-color: #c0392b;
+        }
+        
+        #addItemButton,
+        #saveListButton,
+        #cancelListButton {
             width: 100%;
-            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+        
+        #addItemButton {
+            background-color: var(--secondary-color);
+        }
+        
+        #addItemButton:hover {
+            background-color: #27ae60;
         }
     </style>
     <link rel="manifest" href="manifest.json">
@@ -88,10 +159,9 @@
 
     <div id="overlay" style="display: none;">
         <div id="listEditor">
-            <input type="text" id="commonNumberInput" placeholder="共通のナンバーを入力">
+            <input type="text" id="commonNumberInput" placeholder="軸受製番を入力">
             <div id="listItems"></div>
             <button id="addItemButton">項目を追加</button>
-            <br><br>
             <button id="saveListButton">保存</button>
             <button id="cancelListButton">キャンセル</button>
         </div>
@@ -112,12 +182,12 @@
         const saveButton = document.getElementById('saveButton');
 
         let customList = [
-            { number: '1', text: '外輪外径' },
-            { number: '1', text: 'ころ・保持器' },
-            { number: '1', text: '外輪軌道面（負荷圏）' },
-            { number: '1', text: '外輪軌道面（反負荷圏）' },
-            { number: '1', text: '内輪内径面' },
-            { number: '1', text: '内輪軌道面' },
+            { number: '', text: '外輪外径' },
+            { number: '', text: 'ころ・保持器' },
+            { number: '', text: '外輪軌道面（負荷圏）' },
+            { number: '', text: '外輪軌道面（反負荷圏）' },
+            { number: '', text: '内輪内径面' },
+            { number: '', text: '内輪軌道面' },
         ];
         let currentIndex = 0;
 
@@ -248,6 +318,6 @@
             });
           });
         }
-      </script>
+    </script>
 </body>
 </html>
