@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>軸受点検写真記録アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #cameraButton, #editListButton, #saveButton {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+        #previewContainer {
+            position: relative;
+            max-width: 100%;
+            max-height: 70vh;
+        }
+        #previewImage {
+            max-width: 100%;
+            max-height: 70vh;
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #listEditor {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+        }
+        #nameList {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255,255,255,0.7);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
+        }
+        #listItems {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .listItem {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .listItem input {
+            flex-grow: 1;
+            margin-right: 5px;
+        }
+        #commonNumberInput {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div id="nameList"></div>
+    <button id="cameraButton">カメラを起動</button>
+    <button id="editListButton">リストを編集</button>
+    <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
+    <div id="previewContainer">
+        <img id="previewImage" alt="撮影プレビュー" style="display: none;">
+    </div>
+    <button id="saveButton" style="display: none;">保存</button>
+
+    <div id="overlay" style="display: none;">
+        <div id="listEditor">
+            <input type="text" id="commonNumberInput" placeholder="共通のナンバーを入力">
+            <div id="listItems"></div>
+            <button id="addItemButton">項目を追加</button>
+            <br><br>
+            <button id="saveListButton">保存</button>
+            <button id="cancelListButton">キャンセル</button>
+        </div>
+    </div>
+
+    <script>
+        const cameraButton = document.getElementById('cameraButton');
+        const cameraInput = document.getElementById('cameraInput');
+        const previewImage = document.getElementById('previewImage');
+        const editListButton = document.getElementById('editListButton');
+        const overlay = document.getElementById('overlay');
+        const listItems = document.getElementById('listItems');
+        const addItemButton = document.getElementById('addItemButton');
+        const saveListButton = document.getElementById('saveListButton');
+        const cancelListButton = document.getElementById('cancelListButton');
+        const nameList = document.getElementById('nameList');
+        const commonNumberInput = document.getElementById('commonNumberInput');
+        const saveButton = document.getElementById('saveButton');
+
+        let customList = [
+            { number: '1', text: '外輪外径' },
+            { number: '1', text: 'ころ・保持器' },
+            { number: '1', text: '外輪軌道面（負荷圏）' },
+            { number: '1', text: '外輪軌道面（反負荷圏）' },
+            { number: '1', text: '内輪内径面' },
+            { number: '1', text: '内輪軌道面' },
+        ];
+        let currentIndex = 0;
+
+        function updateNameList() {
+            nameList.innerHTML = customList.map((item, index) => 
+                `<div ${index === currentIndex ? 'style="font-weight: bold; color: red;"' : ''}>${item.number}. ${item.text}</div>`
+            ).join('');
+        }
+
+        function createListItemInput(item, index) {
+            return `
+                <div class="listItem">
+                    <input type="text" class="itemText" value="${item.text}" placeholder="項目名">
+                    <button class="removeItemButton">削除</button>
+                </div>
+            `;
+        }
+
+        function updateListEditor() {
+            listItems.innerHTML = customList.map((item, index) => createListItemInput(item, index)).join('');
+            
+            document.querySelectorAll('.removeItemButton').forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    customList.splice(index, 1);
+                    updateListEditor();
+                });
+            });
+        }
+
+        function saveImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = previewImage.naturalWidth;
+            canvas.height = previewImage.naturalHeight;
+            
+            ctx.drawImage(previewImage, 0, 0);
+            
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            
+            let fileName = '';
+            customList.forEach((item, index) => {
+                const text = `${item.number}. ${item.text}`;
+                ctx.strokeText(text, 10, 30 + index * 30);
+                ctx.fillText(text, 10, 30 + index * 30);
+                
+                if (index === currentIndex) {
+                    fileName = `${item.number}-${item.text.replace(/\s+/g, '-')}`;
+                }
+            });
+
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `${fileName}_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
+            link.click();
+
+            currentIndex = (currentIndex + 1) % customList.length;
+            updateNameList();
+
+            saveButton.style.display = 'none';
+            cameraButton.style.display = 'block';
+            previewImage.style.display = 'none';
+        }
+
+        cameraButton.addEventListener('click', () => {
+            cameraInput.click();
+        });
+
+        cameraInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    updateNameList();
+                    saveButton.style.display = 'block';
+                    cameraButton.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        saveButton.addEventListener('click', saveImage);
+
+        editListButton.addEventListener('click', () => {
+            commonNumberInput.value = customList[0].number;
+            updateListEditor();
+            overlay.style.display = 'flex';
+        });
+
+        addItemButton.addEventListener('click', () => {
+            customList.push({ number: commonNumberInput.value, text: '' });
+            updateListEditor();
+        });
+
+        commonNumberInput.addEventListener('input', () => {
+            const commonNumber = commonNumberInput.value;
+            customList.forEach(item => item.number = commonNumber);
+        });
+
+        saveListButton.addEventListener('click', () => {
+            const commonNumber = commonNumberInput.value;
+            customList = Array.from(listItems.querySelectorAll('.listItem')).map(item => ({
+                number: commonNumber,
+                text: item.querySelector('.itemText').value
+            })).filter(item => item.text.trim() !== '');
+            overlay.style.display = 'none';
+            updateNameList();
+        });
+
+        cancelListButton.addEventListener('click', () => {
+            overlay.style.display = 'none';
+        });
+
+        updateNameList();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/color-name/sw.js').then(function(registration) {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+          });
+        }
+      </script>
+</body>
+</html>
