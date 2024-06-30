@@ -124,6 +124,8 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             flex-shrink: 0;
+            position: relative;
+            top: 10px;
         }
         
         .removeItemButton:hover {
@@ -181,7 +183,7 @@
         const commonNumberInput = document.getElementById('commonNumberInput');
         const saveButton = document.getElementById('saveButton');
 
-        let customList = [
+        let customList = [　
             { number: '', text: '外輪外径' },
             { number: '', text: 'ころ・保持器' },
             { number: '', text: '外輪軌道面（負荷圏）' },
