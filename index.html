@@ -234,15 +234,15 @@
             
             let fileName = '';
             customList.forEach((item, index) => {
-                const text = `${item.number}. ${item.text}`;
-                ctx.strokeText(text, 10, 30 + index * 30);
-                ctx.fillText(text, 10, 30 + index * 30);
                 
                 if (index === currentIndex) {
                     fileName = `${item.number}-${item.text.replace(/\s+/g, '-')}`;
                 }
             });
-
+            let text = fileName;
+                ctx.strokeText(text, 10, 30);
+                ctx.fillText(text, 10, 30);
+                
             const dataUrl = canvas.toDataURL('image/jpeg');
             const link = document.createElement('a');
             link.href = dataUrl;
