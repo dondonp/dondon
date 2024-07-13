@@ -154,6 +154,8 @@
     <button id="cameraButton">カメラを起動</button>
     <button id="editListButton">リストを編集</button>
     <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
+    <button id="uploadButton">アップロード</button>
+    <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
     <div id="previewContainer">
         <img id="previewImage" alt="撮影プレビュー" style="display: none;">
     </div>
@@ -168,6 +170,7 @@
             <button id="cancelListButton">キャンセル</button>
         </div>
     </div>
+    
 
     <script>
         const cameraButton = document.getElementById('cameraButton');
@@ -320,6 +323,46 @@
             });
           });
         }
+    
+    
+        const uploadButton = document.getElementById('uploadButton');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadButton.addEventListener('click', () => {
+        fileInput.click();
+         });
+
+       fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+       if (files.length > 0) {
+        uploadFiles(files);
+        }
+       });
+
+        function uploadFiles(files) {
+       const formData = new FormData();
+       for (let i = 0; i < files.length; i++) {
+        formData.append('files[]', files[i]);
+       }
+
+      // アップロード先のURLを指定してください
+       const uploadUrl = 'https://example.com/upload';
+
+       fetch(uploadUrl, {
+        method: 'POST',
+        body: formData
+       })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Upload successful:', data);
+        alert('ファイルのアップロードが完了しました。');
+       })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('アップロード中にエラーが発生しました。');
+      });
+     }
     </script>
+    
 </body>
 </html>
