@@ -324,44 +324,53 @@
           });
         }
     
-    
         const uploadButton = document.getElementById('uploadButton');
-        const fileInput = document.getElementById('fileInput');
+const fileInput = document.getElementById('fileInput');
 
-        uploadButton.addEventListener('click', () => {
-        fileInput.click();
-         });
+uploadButton.addEventListener('click', () => {
+    fileInput.click();
+});
 
-       fileInput.addEventListener('change', (event) => {
-        const files = event.target.files;
-       if (files.length > 0) {
+fileInput.addEventListener('change', (event) => {
+    const files = event.target.files;
+    if (files.length > 0) {
         uploadFiles(files);
-        }
-       });
+    }
+});
 
-        function uploadFiles(files) {
-       const formData = new FormData();
-       for (let i = 0; i < files.length; i++) {
-        formData.append('files[]', files[i]);
-       }
+function uploadFiles(files) {
+    // S3バケットの設定
+    const bucketName = 'dondon-aws';
+    const region = 'ap-northeast-1';
+    const folderName = 'picture/';
 
-      // アップロード先のURLを指定してください
-       const uploadUrl = 'https://ap-northeast-1.console.aws.amazon.com/s3/buckets/dondon-aws?region=ap-northeast-1&bucketType=general&prefix=picture/';
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileName = folderName + file.name;
+        const fileUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${fileName}`;
 
-       fetch(uploadUrl, {
-        method: 'POST',
-        body: formData
-       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Upload successful:', data);
-        alert('ファイルのアップロードが完了しました。');
-       })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('アップロード中にエラーが発生しました。');
-      });
-     }
+        fetch(fileUrl, {
+            method: 'PUT',
+            body: file,
+            headers: {
+                'Content-Type': file.type
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log(`Upload successful: ${file.name}`);
+            } else {
+                throw new Error(`Upload failed: ${file.name}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(`${file.name}のアップロード中にエラーが発生しました。`);
+        });
+    }
+
+    alert('ファイルのアップロードを開始しました。');
+}
     </script>
     
 </body>
