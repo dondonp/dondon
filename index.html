@@ -246,19 +246,19 @@
          ctx.lineWidth = 2;
     
          let fileName = '';
-          customList.forEach((item, index) => {
-            if (index === currentIndex) {
-            fileName = `${item.number}-${item.cycle}-${item.text.replace(/\s+/g, '-')}`;
-        }
+        customList.forEach((item, index) => {
+               if (index === currentIndex) {
+                 fileName = `${item.number}-${item.cycle}-${item.text.replace(/\s+/g, '-')}`;
+                 }
          });
          let text = fileName;
          ctx.strokeText(text, 10, 30);
          ctx.fillText(text, 10, 30);
-    
+
          const dataUrl = canvas.toDataURL('image/jpeg');
          const link = document.createElement('a');
          link.href = dataUrl;
-         link.download = `${fileName}_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
+         link.download = `${fileName}.jpg`;  // この行を変更
          link.click();
 
          currentIndex = (currentIndex + 1) % customList.length;
