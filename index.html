@@ -99,6 +99,15 @@
             border-radius: 5px;
             font-size: 14px;
         }
+
+        #cycleNumberInput {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+        }
         
         .listItem {
             display: flex;
@@ -164,6 +173,7 @@
     <div id="overlay" style="display: none;">
         <div id="listEditor">
             <input type="text" id="commonNumberInput" placeholder="軸受製番を入力">
+            <input type="text" id="cycleNumberInput" placeholder="使用回数を入力">
             <div id="listItems"></div>
             <button id="addItemButton">項目を追加</button>
             <button id="saveListButton">保存</button>
@@ -184,6 +194,7 @@
         const cancelListButton = document.getElementById('cancelListButton');
         const nameList = document.getElementById('nameList');
         const commonNumberInput = document.getElementById('commonNumberInput');
+        const cycleNumberInput = document.getElementById('cycleNumberInput');
         const saveButton = document.getElementById('saveButton');
 
         let customList = [　
@@ -197,11 +208,10 @@
         let currentIndex = 0;
 
         function updateNameList() {
-            nameList.innerHTML = customList.map((item, index) => 
-                `<div ${index === currentIndex ? 'style="font-weight: bold; color: red;"' : ''}>${item.number}. ${item.text}</div>`
-            ).join('');
-        }
-
+          nameList.innerHTML = customList.map((item, index) => 
+          `<div ${index === currentIndex ? 'style="font-weight: bold; color: red;"' : ''}>${item.number}-${item.cycle}. ${item.text}</div>`
+          ).join('');
+         }
         function createListItemInput(item, index) {
             return `
                 <div class="listItem">
@@ -222,42 +232,41 @@
             });
         }
 
-        function saveImage() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = previewImage.naturalWidth;
-            canvas.height = previewImage.naturalHeight;
-            
-            ctx.drawImage(previewImage, 0, 0);
-            
-            ctx.font = '20px Arial';
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 2;
-            
-            let fileName = '';
-            customList.forEach((item, index) => {
-                
-                if (index === currentIndex) {
-                    fileName = `${item.number}-${item.text.replace(/\s+/g, '-')}`;
-                }
-            });
-            let text = fileName;
-                ctx.strokeText(text, 10, 30);
-                ctx.fillText(text, 10, 30);
-                
-            const dataUrl = canvas.toDataURL('image/jpeg');
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = `${fileName}_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
-            link.click();
+         function saveImage() {
+         const canvas = document.createElement('canvas');
+         const ctx = canvas.getContext('2d');
+         canvas.width = previewImage.naturalWidth;
+         canvas.height = previewImage.naturalHeight;
+    
+         ctx.drawImage(previewImage, 0, 0);
+    
+         ctx.font = '20px Arial';
+         ctx.fillStyle = 'white';
+         ctx.strokeStyle = 'black';
+         ctx.lineWidth = 2;
+    
+         let fileName = '';
+          customList.forEach((item, index) => {
+            if (index === currentIndex) {
+            fileName = `${item.number}-${item.cycle}-${item.text.replace(/\s+/g, '-')}`;
+        }
+         });
+         let text = fileName;
+         ctx.strokeText(text, 10, 30);
+         ctx.fillText(text, 10, 30);
+    
+         const dataUrl = canvas.toDataURL('image/jpeg');
+         const link = document.createElement('a');
+         link.href = dataUrl;
+         link.download = `${fileName}_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
+         link.click();
 
-            currentIndex = (currentIndex + 1) % customList.length;
-            updateNameList();
+         currentIndex = (currentIndex + 1) % customList.length;
+         updateNameList();
 
-            saveButton.style.display = 'none';
-            cameraButton.style.display = 'block';
-            previewImage.style.display = 'none';
+         saveButton.style.display = 'none';
+         cameraButton.style.display = 'block';
+         previewImage.style.display = 'none';
         }
 
         cameraButton.addEventListener('click', () => {
@@ -292,19 +301,28 @@
             updateListEditor();
         });
 
-        commonNumberInput.addEventListener('input', () => {
-            const commonNumber = commonNumberInput.value;
-            customList.forEach(item => item.number = commonNumber);
+        commonNumberInput.addEventListener('input', updateNumbers);
+        cycleNumberInput.addEventListener('input', updateNumbers);
+
+        function updateNumbers() {
+          const commonNumber = commonNumberInput.value;
+          const cycleNumber = cycleNumberInput.value;
+          customList.forEach(item => {
+           item.number = commonNumber;
+           item.cycle = cycleNumber;
         });
+        }
 
         saveListButton.addEventListener('click', () => {
-            const commonNumber = commonNumberInput.value;
-            customList = Array.from(listItems.querySelectorAll('.listItem')).map(item => ({
-                number: commonNumber,
-                text: item.querySelector('.itemText').value
-            })).filter(item => item.text.trim() !== '');
-            overlay.style.display = 'none';
-            updateNameList();
+         const commonNumber = commonNumberInput.value;
+         const cycleNumber = cycleNumberInput.value;  // この行を追加
+          customList = Array.from(listItems.querySelectorAll('.listItem')).map(item => ({
+          number: commonNumber,
+          cycle: cycleNumber,  // この行を追加
+          text: item.querySelector('.itemText').value
+          })).filter(item => item.text.trim() !== '');
+          overlay.style.display = 'none';
+           updateNameList();
         });
 
         cancelListButton.addEventListener('click', () => {
