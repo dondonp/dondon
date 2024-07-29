@@ -321,19 +321,17 @@
 
         async function uploadFile(file) {
             try {
-                // ファイルをBase64エンコード
                 const base64File = await toBase64(file);
                 
-                // GitHub Actions workflowを呼び出す
-                const response = await fetch('https://api.github.com/repos/dondonp/dondon/actions/workflows/s3-upload.yml/dispatches', {
+                const response = await fetch('https://api.github.com/repos/dondonp/dondon/dispatches', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${G_TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json'
                     },
                     body: JSON.stringify({
-                        ref: 'main',
-                        inputs: {
+                        event_type: 'upload_file',
+                        client_payload: {
                             file_name: file.name,
                             file_content: base64File
                         }
