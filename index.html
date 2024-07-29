@@ -91,16 +91,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
-        #commonNumberInput {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        #cycleNumberInput {
+        #commonNumberInput, #cycleNumberInput {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 20px;
@@ -156,7 +147,6 @@
             background-color: #27ae60;
         }
     </style>
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div id="nameList"></div>
@@ -180,7 +170,6 @@
             <button id="cancelListButton">キャンセル</button>
         </div>
     </div>
-    
 
     <script>
         const cameraButton = document.getElementById('cameraButton');
@@ -196,6 +185,8 @@
         const commonNumberInput = document.getElementById('commonNumberInput');
         const cycleNumberInput = document.getElementById('cycleNumberInput');
         const saveButton = document.getElementById('saveButton');
+        const uploadButton = document.getElementById('uploadButton');
+        const fileInput = document.getElementById('fileInput');
 
         let customList = [　
             { number: '', text: '外輪外径' },
@@ -208,10 +199,11 @@
         let currentIndex = 0;
 
         function updateNameList() {
-          nameList.innerHTML = customList.map((item, index) => 
-          `<div ${index === currentIndex ? 'style="font-weight: bold; color: red;"' : ''}>${item.number}-${item.cycle}. ${item.text}</div>`
-          ).join('');
-         }
+            nameList.innerHTML = customList.map((item, index) => 
+                `<div ${index === currentIndex ? 'style="font-weight: bold; color: red;"' : ''}>${item.number}-${item.cycle}. ${item.text}</div>`
+            ).join('');
+        }
+
         function createListItemInput(item, index) {
             return `
                 <div class="listItem">
@@ -232,41 +224,39 @@
             });
         }
 
-         function saveImage() {
-         const canvas = document.createElement('canvas');
-         const ctx = canvas.getContext('2d');
-         canvas.width = previewImage.naturalWidth;
-         canvas.height = previewImage.naturalHeight;
-    
-         ctx.drawImage(previewImage, 0, 0);
-    
-         ctx.font = '20px Arial';
-         ctx.fillStyle = 'white';
-         ctx.strokeStyle = 'black';
-         ctx.lineWidth = 2;
-    
-         let fileName = '';
-        customList.forEach((item, index) => {
-               if (index === currentIndex) {
-                 fileName = `${item.number}-${item.cycle}-${item.text.replace(/\s+/g, '-')}`;
-                 }
-         });
-         let text = fileName;
-         ctx.strokeText(text, 10, 30);
-         ctx.fillText(text, 10, 30);
+        async function saveImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = previewImage.naturalWidth;
+            canvas.height = previewImage.naturalHeight;
+        
+            ctx.drawImage(previewImage, 0, 0);
+        
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+        
+            let fileName = '';
+            customList.forEach((item, index) => {
+                if (index === currentIndex) {
+                    fileName = `${item.number}-${item.cycle}-${item.text.replace(/\s+/g, '-')}`;
+                }
+            });
+            let text = fileName;
+            ctx.strokeText(text, 10, 30);
+            ctx.fillText(text, 10, 30);
 
-         const dataUrl = canvas.toDataURL('image/jpeg');
-         const link = document.createElement('a');
-         link.href = dataUrl;
-         link.download = `${fileName}.jpg`;  // この行を変更
-         link.click();
+            canvas.toBlob(async (blob) => {
+                await uploadFile(new File([blob], `${fileName}.jpg`, { type: 'image/jpeg' }));
+            }, 'image/jpeg');
 
-         currentIndex = (currentIndex + 1) % customList.length;
-         updateNameList();
+            currentIndex = (currentIndex + 1) % customList.length;
+            updateNameList();
 
-         saveButton.style.display = 'none';
-         cameraButton.style.display = 'block';
-         previewImage.style.display = 'none';
+            saveButton.style.display = 'none';
+            cameraButton.style.display = 'block';
+            previewImage.style.display = 'none';
         }
 
         cameraButton.addEventListener('click', () => {
@@ -305,91 +295,95 @@
         cycleNumberInput.addEventListener('input', updateNumbers);
 
         function updateNumbers() {
-          const commonNumber = commonNumberInput.value;
-          const cycleNumber = cycleNumberInput.value;
-          customList.forEach(item => {
-           item.number = commonNumber;
-           item.cycle = cycleNumber;
-        });
+            const commonNumber = commonNumberInput.value;
+            const cycleNumber = cycleNumberInput.value;
+            customList.forEach(item => {
+                item.number = commonNumber;
+                item.cycle = cycleNumber;
+            });
         }
 
         saveListButton.addEventListener('click', () => {
-         const commonNumber = commonNumberInput.value;
-         const cycleNumber = cycleNumberInput.value;  // この行を追加
-          customList = Array.from(listItems.querySelectorAll('.listItem')).map(item => ({
-          number: commonNumber,
-          cycle: cycleNumber,  // この行を追加
-          text: item.querySelector('.itemText').value
-          })).filter(item => item.text.trim() !== '');
-          overlay.style.display = 'none';
-           updateNameList();
+            const commonNumber = commonNumberInput.value;
+            const cycleNumber = cycleNumberInput.value;
+            customList = Array.from(listItems.querySelectorAll('.listItem')).map(item => ({
+                number: commonNumber,
+                cycle: cycleNumber,
+                text: item.querySelector('.itemText').value
+            })).filter(item => item.text.trim() !== '');
+            overlay.style.display = 'none';
+            updateNameList();
         });
 
         cancelListButton.addEventListener('click', () => {
             overlay.style.display = 'none';
         });
 
-        updateNameList();
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('/color-name/sw.js').then(function(registration) {
-              console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }, function(err) {
-              console.log('ServiceWorker registration failed: ', err);
-            });
-          });
+        async function uploadFile(file) {
+            try {
+                // ファイルをBase64エンコード
+                const base64File = await toBase64(file);
+                
+                // GitHub Actions workflowを呼び出す
+                const response = await fetch('https://api.github.com/repos/dondonp/dondon/actions/workflows/s3-upload.yml/dispatches', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${G_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        ref: 'main',
+                        inputs: {
+                            file_name: file.name,
+                            file_content: base64File
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    console.log("Successfully triggered upload workflow.");
+                    alert(`${file.name}のアップロードワークフローが開始されました。`);
+                } else {
+                    throw new Error('Failed to trigger upload workflow');
+                }
+            } catch (err) {
+                console.error("There was an error uploading your photo: ", err.message);
+                alert(`${file.name}のアップロード中にエラーが発生しました。エラー: ${err.message}`);
+            }
         }
-    
-        const uploadButton = document.getElementById('uploadButton');
-const fileInput = document.getElementById('fileInput');
 
-uploadButton.addEventListener('click', () => {
-    fileInput.click();
-});
+        // ファイルをBase64エンコードする関数
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
 
-fileInput.addEventListener('change', (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-        uploadFiles(files);
-    }
-});
-
-function uploadFiles(files) {
-    // S3バケットの設定
-    const bucketName = 'dondon-aws';
-    const region = 'ap-northeast-1';
-    const folderName = 'picture/';
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileName = folderName + file.name;
-        const fileUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${fileName}`;
-
-        fetch(fileUrl, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log(`Upload successful: ${file.name}`);
-            } else {
-                throw new Error(`Upload failed: ${file.name}`);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert(`${file.name}のアップロード中にエラーが発生しました。`);
+        uploadButton.addEventListener('click', () => {
+            fileInput.click();
         });
-    }
 
-    alert('ファイルのアップロードを開始しました。');
-}
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                Array.from(files).forEach(uploadFile);
+            }
+        });
+
+        updateNameList();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/color-name/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
-    
 </body>
 </html>
