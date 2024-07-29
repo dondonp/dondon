@@ -1,0 +1,37 @@
+name: S3 Upload
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      file_name:
+        description: 'File name to upload'
+        required: true
+      file_content:
+        description: 'Base64 encoded file content'
+        required: true
+
+jobs:
+  upload-to-s3:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-1
+
+    - name: Upload to S3
+      run: |
+        echo "${{ github.event.inputs.file_content }}" | base64 -d > "${{ github.event.inputs.file_name }}"
+        aws s3 cp "${{ github.event.inputs.file_name }}" s3://dondon-aws/picture/
+      if: github.event_name == 'workflow_dispatch'
+
+    - name: Sync HTML files to S3
+      run: |
+        aws s3 sync . s3://dondon-aws/picture/ --exclude "*" --include "*.html"
+      if: github.event_name == 'push'
