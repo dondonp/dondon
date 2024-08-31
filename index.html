@@ -146,6 +146,15 @@
         #addItemButton:hover {
             background-color: #27ae60;
         }
+    
+        #customListSelector {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+        }
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
@@ -165,6 +174,12 @@
         <div id="listEditor">
             <input type="text" id="commonNumberInput" placeholder="軸受製番を入力">
             <input type="text" id="cycleNumberInput" placeholder="使用回数を入力">
+            <select id="customListSelector">
+                <option value="1">連鋳点検</option>
+                <option value="2">ロールネック点検</option>
+                <option value="3">円筒点検</option>
+                <option value="4">円錐点検</option>
+            </select>
             <div id="listItems"></div>
             <button id="addItemButton">項目を追加</button>
             <button id="saveListButton">保存</button>
@@ -188,17 +203,95 @@
         const saveButton = document.getElementById('saveButton');
         const uploadButton = document.getElementById('uploadButton');
         const fileInput = document.getElementById('fileInput');
+        const customListSelector = document.getElementById('customListSelector');
 
-        let customList = [　
-            { number: '', text: '外輪外径' },
-            { number: '', text: 'ころ・保持器' },
-            { number: '', text: '外輪軌道面（負荷圏）' },
-            { number: '', text: '外輪軌道面（反負荷圏）' },
-            { number: '', text: '内輪内径面' },
-            { number: '', text: '内輪軌道面' },
-        ];
-        let currentIndex = 0;
+        let customLists = {
+            1: [
+                { number: '', text: '外輪外径' },
+                { number: '', text: 'ころ・保持器' },
+                { number: '', text: '外輪軌道面（負荷圏）' },
+                { number: '', text: '外輪軌道面（反負荷圏）' },
+                { number: '', text: '内輪内径面' },
+                { number: '', text: '内輪軌道面' },
+            ],
+            2: [
+                { number: '', text: '外輪外径(負荷圏)' },
+                { number: '', text: '外輪外径(反負荷圏)' },
+                { number: '', text: 'A/CA列軌道面（負荷圏)' },
+                { number: '', text: 'CE/E列軌道面（負荷圏)' },
+                { number: '', text: 'A列軌道面（負荷圏)' },
+                { number: '', text: 'CA列軌道面（負荷圏)' },
+                { number: '', text: 'CE列軌道面（負荷圏)' },
+                { number: '', text: 'E列軌道面（負荷圏)' },
+                { number: '', text: 'A/CA列軌道面（反負荷圏)' },
+                { number: '', text: 'CE/E列軌道面（反負荷圏)' },
+                { number: '', text: 'A/CA列ころ保持器' },
+                { number: '', text: 'CE/E列ころ保持器' },
+                { number: '', text: '内輪内径面' },
+                { number: '', text: 'A列シール' },
+                { number: '', text: 'E列シール' },
 
+            ],
+            3: [
+                { number: '', text: '外輪外径' },
+                { number: '', text: '軌道面（負荷圏）' },
+                { number: '', text: '軌道面（反負荷圏）' },
+                { number: '', text: 'ころ/保持器' },
+                { number: '', text: 'ころ端面' },
+                { number: '', text: '内輪内径面' },
+            ],
+            4: [
+                { number: '', text: '外輪外径' },
+                { number: '', text: '外輪軌道面（負荷圏）' },
+                { number: '', text: '外輪軌道面（反負荷圏）' },
+                { number: '', text: 'ころ/保持器' },
+                { number: '', text: 'ころ端面' },
+                { number: '', text: '内輪軌道面' },
+            ]
+        };
+
+        let currentCustomListId = 1;
+
+        function updateListEditor() {
+            listItems.innerHTML = customList.map((item, index) => createListItemInput(item, index)).join('');
+            
+            document.querySelectorAll('.removeItemButton').forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    customList.splice(index, 1);
+                    updateListEditor();
+                });
+            });
+        }
+
+        function loadCustomList(listId) {
+            customList = JSON.parse(JSON.stringify(customLists[listId]));
+            updateListEditor();
+        }
+
+        customListSelector.addEventListener('change', (event) => {
+            currentCustomListId = parseInt(event.target.value);
+            loadCustomList(currentCustomListId);
+        });
+
+        editListButton.addEventListener('click', () => {
+            commonNumberInput.value = customList[0].number;
+            customListSelector.value = currentCustomListId;
+            updateListEditor();
+            overlay.style.display = 'flex';
+        });
+
+        saveListButton.addEventListener('click', () => {
+            const commonNumber = commonNumberInput.value;
+            const cycleNumber = cycleNumberInput.value;
+            customList = Array.from(listItems.querySelectorAll('.listItem')).map(item => ({
+                number: commonNumber,
+                cycle: cycleNumber,
+                text: item.querySelector('.itemText').value
+            })).filter(item => item.text.trim() !== '');
+            customLists[currentCustomListId] = JSON.parse(JSON.stringify(customList));
+            overlay.style.display = 'none';
+            updateNameList();
+        });
         function updateNameList() {
             nameList.innerHTML = customList.map((item, index) => 
                 `<div ${index === currentIndex ? 'style="font-weight: bold; color: red;"' : ''}>${item.number}-${item.cycle}. ${item.text}</div>`
@@ -361,6 +454,7 @@
             }
         });
 
+        loadCustomList(currentCustomListId);
         updateNameList();
 
         if ('serviceWorker' in navigator) {
