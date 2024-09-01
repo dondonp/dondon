@@ -82,7 +82,7 @@ body {
     left: 0;
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: center; /* スペースアラウンドからセンターに変更 */
     padding: 10px;
     background-color: white;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
@@ -90,9 +90,24 @@ body {
 }
 
 .bottom-section button {
-    flex: 1;
+    flex: 0 1 auto; /* フレックスグロウを0に設定 */
     margin: 0 5px;
-    max-width: 33%; /* ボタンの最大幅を制限 */
+    width: 22%; /* 最大幅33%から22%に変更（約10%減少） */
+    max-width: 120px; /* ボタンの最大幅を制限 */
+}
+
+button {
+    font-size: 14px;
+    padding: 8px 12px; /* 左右のパディングを少し減らす */
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 長いテキストは省略記号で表示 */
 }
 
 #saveButton {
@@ -216,7 +231,7 @@ body {
     <div class="bottom-section">
         <button id="cameraButton">カメラ起動</button>
         <button id="editListButton">リスト編集</button>
-        <button id="uploadButton">UPLOAD</button>
+        <button id="uploadButton">アップロード</button>
         <button id="saveButton" style="display: none;">保存</button>
     </div>
 
