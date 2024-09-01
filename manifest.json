@@ -2,7 +2,7 @@
   "name": "軸受点検写真記録アプリ",
   "short_name": "軸受点検",
   "description": "軸受の点検と写真記録を行うアプリケーション",
-  "start_url": "/dondon/index.html",
+  "start_url": "https://dondonp.github.io/dondon/index.html",
   "scope": "/dondon/",
   "display": "standalone",
   "background_color": "#ffffff",
