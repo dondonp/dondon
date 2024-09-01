@@ -375,8 +375,14 @@ button {
             ctx.strokeText(text, 10, 30);
             ctx.fillText(text, 10, 30);
 
-            canvas.toBlob(async (blob) => {
-                await uploadFile(new File([blob], `${fileName}.jpg`, { type: 'image/jpeg' }));
+            // 画像をデバイスに保存する
+            canvas.toBlob((blob) => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${fileName}.jpg`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+                alert(`${fileName}.jpg を保存しました。`);
             }, 'image/jpeg');
 
             currentIndex = (currentIndex + 1) % customList.length;
