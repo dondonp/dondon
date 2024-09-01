@@ -89,28 +89,30 @@ body {
     height: 50px;
 }
 
-button {
-    font-size: 14px;
-    padding: 8px 16px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-}
-
-button:hover {
-    background-color: var(--button-hover-color);
+.bottom-section button {
+    flex: 1;
+    margin: 0 5px;
+    max-width: 33%; /* ボタンの最大幅を制限 */
 }
 
 #saveButton {
     background-color: var(--secondary-color);
+    display: none; /* 初期状態では非表示 */
 }
 
 #saveButton:hover {
     background-color: #27ae60;
+}
+
+/* JavaScriptで表示切替を行うため、以下のスタイルを追加 */
+#saveButton.visible {
+    display: block;
+}
+
+#cameraButton.hidden,
+#editListButton.hidden,
+#uploadButton.hidden {
+    display: none;
 }
 
 #overlay {
