@@ -6,167 +6,211 @@
     <title>軸受点検写真記録アプリ</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-            --button-hover-color: #2980b9;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-        
-        button {
-            font-size: 16px;
-            padding: 12px 24px;
-            margin-bottom: 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        button:hover {
-            background-color: var(--button-hover-color);
-        }
-        
-        #previewContainer {
-            position: relative;
-            max-width: 100%;
-            max-height: 70vh;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        #previewImage {
-            max-width: 100%;
-            max-height: 70vh;
-            display: block;
-        }
-        
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-        
-        #listEditor {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 400px;
-            margin: 20px auto;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        #nameList {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background-color: rgba(255,255,255,0.9);
-            padding: 15px;
-            border-radius: 10px;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        #commonNumberInput, #cycleNumberInput {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .listItem {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .listItem input {
-            flex-grow: 1;
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #bdc3c7;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .removeItemButton {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            flex-shrink: 0;
-            position: relative;
-            top: 10px;
-        }
-        
-        .removeItemButton:hover {
-            background-color: #c0392b;
-        }
-        
-        #addItemButton,
-        #saveListButton,
-        #cancelListButton {
-            width: 100%;
-            margin-top: 10px;
-        }
-        
-        #addItemButton {
-            background-color: var(--secondary-color);
-        }
-        
-        #addItemButton:hover {
-            background-color: #27ae60;
-        }
-        #listSelector {
-            margin-bottom: 20px;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-        }
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-color: #ecf0f1;
+    --text-color: #34495e;
+    --button-hover-color: #2980b9;
+}
 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.top-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#nameList {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+#nameList div {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#nameList div:last-child {
+    border-bottom: none;
+}
+
+#nameList div.active {
+    font-weight: bold;
+    color: var(--primary-color);
+    background-color: #e8f4fd;
+}
+
+#previewContainer {
+    width: 90%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+#previewImage {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-section {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    font-size: 16px;
+    padding: 12px 24px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--button-hover-color);
+}
+
+#saveButton {
+    background-color: var(--secondary-color);
+}
+
+#saveButton:hover {
+    background-color: #27ae60;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+#listEditor {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#commonNumberInput, #cycleNumberInput {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.listItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.listItem input {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.removeItemButton {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.removeItemButton:hover {
+    background-color: #c0392b;
+}
+
+#addItemButton,
+#saveListButton,
+#cancelListButton {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#addItemButton {
+    background-color: var(--secondary-color);
+}
+
+#addItemButton:hover {
+    background-color: #27ae60;
+}
+
+#listSelector {
+    margin-bottom: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+}
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
 <body>
-    <div id="nameList"></div>
-    <button id="cameraButton">カメラを起動</button>
-    <button id="editListButton">リストを編集</button>
-    <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
-    <button id="uploadButton">アップロード</button>
-    <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
-    <div id="previewContainer">
-        <img id="previewImage" alt="撮影プレビュー" style="display: none;">
+    <div class="top-section">
+        <div id="nameList"></div>
+        <div id="previewContainer">
+            <img id="previewImage" alt="撮影プレビュー" style="display: none;">
+        </div>
     </div>
-    <button id="saveButton" style="display: none;">保存</button>
+    
+    <div class="bottom-section">
+        <button id="cameraButton">カメラを起動</button>
+        <button id="editListButton">リストを編集</button>
+        <button id="uploadButton">アップロード</button>
+        <button id="saveButton" style="display: none;">保存</button>
+    </div>
+
+    <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
+    <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
 
     <div id="overlay" style="display: none;">
         <div id="listEditor">
