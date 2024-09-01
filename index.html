@@ -217,6 +217,33 @@ button {
     padding: 8px;
     font-size: 14px;
 }
+
+#commentBox {
+            width: 90%;
+            max-width: 600px;
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #voiceInputButton {
+            background-color: #9b59b6;
+            margin-top: 10px;
+        }
+
+        #voiceInputButton:hover {
+            background-color: #8e44ad;
+        }
+
+        #voiceInputButton.recording {
+            background-color: #e74c3c;
+        }
+
+        #voiceInputButton.recording:hover {
+            background-color: #c0392b;
+        }
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
@@ -226,6 +253,8 @@ button {
         <div id="previewContainer">
             <img id="previewImage" alt="撮影プレビュー" style="display: none;">
         </div>
+        <textarea id="commentBox" rows="4" placeholder="コメントを入力してください"></textarea>
+        <button id="voiceInputButton">音声入力</button>
     </div>
     
     <div class="bottom-section">
@@ -352,6 +381,42 @@ button {
             updateNameList();
         });
 
+        // 音声認識の設定
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'ja-JP';
+        recognition.interimResults = true;
+        recognition.continuous = true;
+
+        const voiceInputButton = document.getElementById('voiceInputButton');
+        const commentBox = document.getElementById('commentBox');
+
+        let isRecording = false;
+
+        voiceInputButton.addEventListener('click', () => {
+            if (!isRecording) {
+                recognition.start();
+                voiceInputButton.textContent = '録音中...';
+                voiceInputButton.classList.add('recording');
+            } else {
+                recognition.stop();
+                voiceInputButton.textContent = '音声入力';
+                voiceInputButton.classList.remove('recording');
+            }
+            isRecording = !isRecording;
+        });
+
+        recognition.onresult = (event) => {
+            const result = event.results[event.results.length - 1];
+            const transcript = result[0].transcript;
+            commentBox.value += transcript;
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            voiceInputButton.textContent = '音声入力';
+            voiceInputButton.classList.remove('recording');
+        };
+
         async function saveImage() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -382,8 +447,17 @@ button {
                 link.download = `${fileName}.jpg`;
                 link.click();
                 URL.revokeObjectURL(link.href);
-                alert(`${fileName}.jpg を保存しました。`);
             }, 'image/jpeg');
+
+           // テキストファイルを保存
+           const textBlob = new Blob([commentBox.value], {type: 'text/plain'});
+            const textLink = document.createElement('a');
+            textLink.href = URL.createObjectURL(textBlob);
+            textLink.download = `${fileName}.txt`;
+            textLink.click();
+            URL.revokeObjectURL(textLink.href);
+
+            alert(`${fileName}.jpg と ${fileName}.txt を保存しました。`);
 
             currentIndex = (currentIndex + 1) % customList.length;
             updateNameList();
@@ -391,6 +465,7 @@ button {
             saveButton.style.display = 'none';
             cameraButton.style.display = 'block';
             previewImage.style.display = 'none';
+            commentBox.value = ''; // コメントボックスをクリア
         }
 
         cameraButton.addEventListener('click', () => {
