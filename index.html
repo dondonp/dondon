@@ -218,19 +218,26 @@ button {
     font-size: 14px;
 }
 
-#commentBox {
+#commentSection {
+            display: none; /* 初期状態では非表示 */
             width: 90%;
             max-width: 600px;
             margin: 10px auto;
+        }
+
+        #commentBox {
+            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+            margin-bottom: 10px;
         }
 
         #voiceInputButton {
             background-color: #9b59b6;
             margin-top: 10px;
+            width: 100%;
         }
 
         #voiceInputButton:hover {
@@ -253,8 +260,10 @@ button {
         <div id="previewContainer">
             <img id="previewImage" alt="撮影プレビュー" style="display: none;">
         </div>
-        <textarea id="commentBox" rows="4" placeholder="コメントを入力してください"></textarea>
-        <button id="voiceInputButton">音声入力</button>
+        <div id="commentSection">
+            <textarea id="commentBox" rows="4" placeholder="コメントを入力してください"></textarea>
+            <button id="voiceInputButton">音声入力</button>
+        </div>
     </div>
     
     <div class="bottom-section">
@@ -301,6 +310,7 @@ button {
         const uploadButton = document.getElementById('uploadButton');
         const fileInput = document.getElementById('fileInput');
         const listSelector = document.getElementById('listSelector');
+        const commentSection = document.getElementById('commentSection');
 
         const customLists = [
             [
@@ -472,6 +482,14 @@ button {
             cameraInput.click();
         });
 
+        function showCommentSection() {
+            commentSection.style.display = 'block';
+        }
+
+        function hideCommentSection() {
+            commentSection.style.display = 'none';
+        }
+
         cameraInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -482,12 +500,18 @@ button {
                     updateNameList();
                     saveButton.style.display = 'block';
                     cameraButton.style.display = 'none';
+                    showCommentSection(); // コメントセクションを表示
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        saveButton.addEventListener('click', saveImage);
+        hideCommentSection();
+
+        saveButton.addEventListener('click', async () => {
+            await saveImage();
+            hideCommentSection(); // コメントセクションを非表示
+        });
 
         editListButton.addEventListener('click', () => {
             commonNumberInput.value = customList[0].number;
