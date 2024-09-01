@@ -6,220 +6,55 @@
     <title>軸受点検写真記録アプリ</title>
     <style>
        :root {
-    --primary-color: #3498db;
-    --secondary-color: #2ecc71;
-    --background-color: #ecf0f1;
-    --text-color: #34495e;
-    --button-hover-color: #2980b9;
-}
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --button-hover-color: #2980b9;
+        }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 100vh;
-    margin: 0;
-    background-color: var(--background-color);
-    color: var(--text-color);
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
 
-.top-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-    height: 50vh;
-    overflow-y: auto;
-}
+        .top-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
-#nameList {
-    background-color: white;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 600px;
-    margin-bottom: 10px;
-    overflow-y: auto;
-    max-height: calc(50vh - 20px);
-}
+        #currentItemText {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
 
-#nameList div {
-    padding: 5px;
-    border-bottom: 1px solid #e0e0e0;
-}
+        #previewContainer {
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 10px;
+        }
 
-#nameList div:last-child {
-    border-bottom: none;
-}
+        #previewImage {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-#nameList div.active {
-    font-weight: bold;
-    color: var(--primary-color);
-    background-color: #e8f4fd;
-}
-
-#previewContainer {
-    width: 90%;
-    max-width: 600px;
-    margin-bottom: 10px;
-}
-
-#previewImage {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.bottom-section {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center; /* スペースアラウンドからセンターに変更 */
-    padding: 10px;
-    background-color: white;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    height: 50px;
-}
-
-.bottom-section button {
-    flex: 0 1 auto; /* フレックスグロウを0に設定 */
-    margin: 0 2px;
-    width: 30%; /* 最大幅33%から22%に変更（約10%減少） */
-    max-width: 120px; /* ボタンの最大幅を制限 */
-}
-
-button {
-    font-size: 14px;
-    padding: 8px 12px; /* 左右のパディングを少し減らす */
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* 長いテキストは省略記号で表示 */
-}
-
-#saveButton {
-    background-color: var(--secondary-color);
-    display: none; /* 初期状態では非表示 */
-}
-
-#saveButton:hover {
-    background-color: #27ae60;
-}
-
-/* JavaScriptで表示切替を行うため、以下のスタイルを追加 */
-#saveButton.visible {
-    display: block;
-}
-
-#cameraButton.hidden,
-#editListButton.hidden,
-#uploadButton.hidden {
-    display: none;
-}
-
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    z-index: 1000;
-    overflow-y: auto;
-    padding: 20px 0;
-}
-
-#listEditor {
-    background-color: white;
-    padding: 20px;
-    border-radius: 15px;
-    width: 80%;
-    max-width: 400px;
-    margin: 20px auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-#commonNumberInput, #cycleNumberInput {
-    width: calc(100% - 20px);
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.listItem {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.listItem input {
-    flex-grow: 1;
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.removeItemButton {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-shrink: 0;
-}
-
-.removeItemButton:hover {
-    background-color: #c0392b;
-}
-
-#addItemButton,
-#saveListButton,
-#cancelListButton {
-    width: 100%;
-    margin-top: 10px;
-}
-
-#addItemButton {
-    background-color: var(--secondary-color);
-}
-
-#addItemButton:hover {
-    background-color: #27ae60;
-}
-
-#listSelector {
-    margin-bottom: 10px;
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-}
-
-#commentSection {
-            display: none; /* 初期状態では非表示 */
+        #commentSection {
             width: 90%;
             max-width: 600px;
             margin: 10px auto;
@@ -236,7 +71,13 @@ button {
 
         #voiceInputButton {
             background-color: #9b59b6;
-            margin-top: 10px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
             width: 100%;
         }
 
@@ -251,16 +92,58 @@ button {
         #voiceInputButton.recording:hover {
             background-color: #c0392b;
         }
+
+        .bottom-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-section button {
+            flex: 0 1 auto;
+            margin: 0 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .bottom-section button:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        #saveButton {
+            background-color: var(--secondary-color);
+        }
+
+        #saveButton:hover {
+            background-color: #27ae60;
+        }
+
+        /* Hide nameList */
+        #nameList {
+            display: none;
+        }
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
 <body>
     <div class="top-section">
-        <div id="nameList"></div>
+        <div id="currentItemText"></div>
         <div id="previewContainer">
             <img id="previewImage" alt="撮影プレビュー" style="display: none;">
         </div>
-        <div id="commentSection">
+        <div id="commentSection" style="display: none;">
             <textarea id="commentBox" rows="4" placeholder="コメントを入力してください"></textarea>
             <button id="voiceInputButton">音声入力</button>
         </div>
@@ -311,6 +194,8 @@ button {
         const fileInput = document.getElementById('fileInput');
         const listSelector = document.getElementById('listSelector');
         const commentSection = document.getElementById('commentSection');
+        const currentItemText = document.getElementById('currentItemText');
+        
 
         const customLists = [
             [
@@ -490,27 +375,44 @@ button {
             commentSection.style.display = 'none';
         }
 
+        function updateCurrentItemText() {
+            if (customList[currentIndex]) {
+                currentItemText.textContent = `${customList[currentIndex].number}-${customList[currentIndex].cycle}. ${customList[currentIndex].text}`;
+            }
+        }
+
+        function showPhotoView() {
+            previewImage.style.display = 'block';
+            commentSection.style.display = 'block';
+            updateCurrentItemText();
+            saveButton.style.display = 'block';
+            cameraButton.style.display = 'none';
+        }
+
+        function hidePhotoView() {
+            previewImage.style.display = 'none';
+            commentSection.style.display = 'none';
+            currentItemText.textContent = '';
+            saveButton.style.display = 'none';
+            cameraButton.style.display = 'block';
+        }
+
         cameraInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
-                    updateNameList();
-                    saveButton.style.display = 'block';
-                    cameraButton.style.display = 'none';
-                    showCommentSection(); // コメントセクションを表示
+                    showPhotoView();
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        hideCommentSection();
-
         saveButton.addEventListener('click', async () => {
             await saveImage();
-            hideCommentSection(); // コメントセクションを非表示
+            hidePhotoView();
+            commentBox.value = ''; // Clear comment box after saving
         });
 
         editListButton.addEventListener('click', () => {
@@ -551,6 +453,8 @@ button {
         cancelListButton.addEventListener('click', () => {
             overlay.style.display = 'none';
         });
+
+        hidePhotoView();
 
         async function uploadFile(file) {
             try {
