@@ -5,7 +5,6 @@ const urlsToCache = [
   '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png',
-  'https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js'
 ];
 
 self.addEventListener('install', function(event) {
