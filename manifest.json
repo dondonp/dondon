@@ -1,22 +1,20 @@
 {
   "name": "軸受点検写真記録アプリ",
-  "short_name": "軸受点検",
-  "description": "軸受の点検写真を記録するためのアプリケーション",
+  "short_name": "点検アプリ",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3498db",
   "icons": [
     {
-      "src": "./img/192.png",
+      "src": "img/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./img/512.png",
+      "src": "img/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#4e342e"
+  ]
 }
