@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>軸受点検写真記録アプリ</title>
     <style>
-        :root {
+       :root {
     --primary-color: #3498db;
     --secondary-color: #2ecc71;
     --background-color: #ecf0f1;
@@ -30,22 +30,26 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
     box-sizing: border-box;
+    height: 50vh;
+    overflow-y: auto;
 }
 
 #nameList {
     background-color: white;
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 600px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    max-height: calc(50vh - 20px);
 }
 
 #nameList div {
-    padding: 10px;
+    padding: 5px;
     border-bottom: 1px solid #e0e0e0;
 }
 
@@ -62,7 +66,7 @@ body {
 #previewContainer {
     width: 90%;
     max-width: 600px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 #previewImage {
@@ -79,20 +83,22 @@ body {
     width: 100%;
     display: flex;
     justify-content: space-around;
-    padding: 20px;
+    padding: 10px;
     background-color: white;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    height: 50px;
 }
 
 button {
-    font-size: 16px;
-    padding: 12px 24px;
+    font-size: 14px;
+    padding: 8px 16px;
     background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    white-space: nowrap;
 }
 
 button:hover {
@@ -116,25 +122,28 @@ button:hover {
     background-color: rgba(0,0,0,0.7);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     z-index: 1000;
     overflow-y: auto;
+    padding: 20px 0;
 }
 
 #listEditor {
     background-color: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: 15px;
     width: 80%;
     max-width: 400px;
     margin: 20px auto;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 #commonNumberInput, #cycleNumberInput {
     width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 20px;
+    padding: 8px;
+    margin-bottom: 10px;
     border: 1px solid #bdc3c7;
     border-radius: 5px;
     font-size: 14px;
@@ -148,7 +157,7 @@ button:hover {
 
 .listItem input {
     flex-grow: 1;
-    padding: 10px;
+    padding: 8px;
     margin-right: 10px;
     border: 1px solid #bdc3c7;
     border-radius: 5px;
@@ -160,7 +169,7 @@ button:hover {
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     flex-shrink: 0;
@@ -186,10 +195,10 @@ button:hover {
 }
 
 #listSelector {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     width: 100%;
-    padding: 10px;
-    font-size: 16px;
+    padding: 8px;
+    font-size: 14px;
 }
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
