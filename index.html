@@ -275,6 +275,7 @@ button {
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            max-height: 50vh;
         }
 
         #previewImage {
@@ -286,6 +287,14 @@ button {
         .comment-section {
             padding: 10px;
             background-color: white;
+            overflow-y: auto;
+            max-height: 40vh;
+        }
+
+        #commentBox {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
         }
 
         /* 既存のスタイルの調整 */
@@ -299,12 +308,6 @@ button {
 
         #commentSection {
             display: block;
-        }
-
-        /* ボタンのスタイル調整 */
-        .bottom-section {
-            position: static;
-            padding: 10px;
         }
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
@@ -328,18 +331,19 @@ button {
         <button id="saveButton" style="display: none;">保存</button>
     </div>
 
+    <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
+    <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+
     <div class="camera-view">
         <div class="current-index" id="currentIndexText"></div>
         <div class="photo-container">
             <img id="previewImage" alt="撮影プレビュー">
         </div>
         <div class="comment-section">
-            <textarea id="commentBox" rows="4" placeholder="コメントを入力してください"></textarea>
+            <textarea id="commentBox" placeholder="コメントを入力してください"></textarea>
             <button id="voiceInputButton">音声入力</button>
         </div>
-
-    <input type="file" id="cameraInput" accept="image/*" capture="camera" style="display: none;">
-    <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+    </div>
 
     <div id="overlay" style="display: none;">
         <div id="listEditor">
@@ -582,9 +586,6 @@ button {
             document.querySelector('.top-section').classList.add('active');
             commentBox.value = '';
         });
-
-        hideCommentSection();
-
         editListButton.addEventListener('click', () => {
             commonNumberInput.value = customList[0].number;
             updateListEditor();
