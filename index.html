@@ -39,16 +39,16 @@ body {
         }
 
         .top-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            box-sizing: border-box;
-            height: calc(100vh - 20px); /* タイトルとボトムセクションの高さを考慮 */
-            overflow-y: auto;
-        }
-
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    height: auto; /* 固定の高さを削除 */
+    overflow-y: auto;
+    margin-bottom: 60px; /* ボトムセクションの高さ分の余白を追加 */
+}
 #nameList {
     background-color: white;
     border-radius: 10px;
@@ -90,7 +90,7 @@ body {
 }
 
 .bottom-section {
-    position: fixed;
+    position: fixed; /* 固定位置を維持 */
     bottom: 0;
     left: 0;
     width: 100%;
@@ -99,8 +99,8 @@ body {
     padding: 10px;
     background-color: white;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* 他の要素の上に表示されるようにする */
 }
-
 .bottom-section button {
     flex: 0 1 auto; /* フレックスグロウを0に設定 */
     margin: 0 2px;
@@ -243,14 +243,18 @@ button {
     border-radius: 5px;
     font-size: 16px;
     margin-bottom: 10px;
-    height:40px; /* コメント欄の高さを小さくする */
-    resize: vertical; /* ユーザーが必要に応じて縦にリサイズできるようにする */
+    height: 60px; /* コメント欄の高さを少し増やす */
+    resize: vertical;
 }
 
 #voiceInputButton {
     background-color: #9b59b6;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 20px; /* ボタンの下の余白を増やす */
+    padding: 10px; /* ボタンの高さを増やす */
+}
+body {
+    padding-bottom: 60px; /* ボトムセクションの高さ分の余白を追加 */
 }
 
 #voiceInputButton:hover {
