@@ -251,6 +251,29 @@ button {
 #voiceInputButton.recording:hover {
     background-color: #c0392b;
 }
+
+#appInstructions {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        #appInstructions h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        #appInstructions ol {
+            padding-left: 20px;
+        }
+        
+        #appInstructions li {
+            margin-bottom: 10px;
+        }
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
@@ -509,26 +532,28 @@ function hideCommentSection() {
 }
 
 cameraInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            previewImage.src = e.target.result;
-            previewImage.style.display = 'block';
-            updateNameList();
-            saveButton.style.display = 'block';
-            cameraButton.style.display = 'none';
-            showCommentSection();
-        };
-        reader.readAsDataURL(file);
-    }
-});
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    updateNameList();
+                    saveButton.style.display = 'block';
+                    cameraButton.style.display = 'none';
+                    showCommentSection();
+                    toggleAppInstructions(false); // 説明を非表示にする
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
-saveButton.addEventListener('click', async () => {
-    await saveImage();
-    hideCommentSection();
-});
-
+        // 保存ボタンのイベントリスナーを修正
+        saveButton.addEventListener('click', async () => {
+            await saveImage();
+            hideCommentSection();
+            toggleAppInstructions(true); // 説明を再表示する
+        });
 // 初期状態でコメントセクションを非表示にする
 hideCommentSection();
 
@@ -613,6 +638,16 @@ hideCommentSection();
         });
 
         updateNameList();
+
+        // 新しい関数: 説明セクションの表示/非表示を切り替える
+        function toggleAppInstructions(show) {
+            const appInstructions = document.getElementById('appInstructions');
+            if (show) {
+                appInstructions.style.display = 'block';
+            } else {
+                appInstructions.style.display = 'none';
+            }
+        }
 
     
     </script>
