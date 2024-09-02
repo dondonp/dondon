@@ -27,16 +27,27 @@ body {
     color: var(--text-color);
 }
 
-.top-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    box-sizing: border-box;
-    height: calc(100vh - 80px); /* ボトムセクションの高さを考慮 */
-    overflow-y: auto;
-}
+.app-title {
+            width: 100%;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 0;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            height: calc(100vh - 120px); /* タイトルとボトムセクションの高さを考慮 */
+            overflow-y: auto;
+        }
 
 #nameList {
     background-color: white;
@@ -278,6 +289,7 @@ button {
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
 <body>
+    <div class="app-title">軸受点検写真撮影アプリ</div>
     <div class="top-section">
         <div id="nameList"></div>
         <div id="appInstructions">
