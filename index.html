@@ -271,6 +271,8 @@ button {
             margin: 10px 0;
             font-size: 14px;
             line-height: 1.5;
+            max-height: 200px; /* スクロール可能な最大高さを設定 */
+            overflow-y: auto; /* 垂直方向のスクロールを有効にする */
         }
         
         #appInstructions h3 {
@@ -285,12 +287,21 @@ button {
         #appInstructions li {
             margin-bottom: 10px;
         }
+        .section-title {
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+        
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
 </head>
 <body>
     <div class="app-title">軸受点検写真撮影アプリ</div>
     <div class="top-section">
+        <div class="section-title">撮影順</div>
         <div id="nameList"></div>
         <div id="appInstructions">
             <h3>ー軸受点検アプリの使い方ー</h3>
