@@ -300,6 +300,66 @@ body {
     margin-bottom: 10px;
     text-align: center;
 }
+
+.keyboard {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #e0e0e0;
+            padding: 10px 5px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            box-sizing: border-box;
+            z-index: 1001;
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        .key {
+            height: 45px;
+            margin: 0 0.25%;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .key:hover {
+            background-color: #f0f0f0;
+        }
+        #alphabetKeyboard .key {
+            width: 8.5%;
+        }
+        #alphabetKeyboard .key-wide {
+            width: 23%;
+        }
+        #alphabetKeyboard .key-extra-wide {
+            width: 98%;
+        }
+        #alphabetKeyboard .keyboard-row:nth-child(3) {
+            padding: 0 2%;
+        }
+        #numberKeyboard .key {
+            width: 30%;
+            height: 60px;
+            font-size: 20px;
+            margin: 0.5%;
+        }
+        #numberKeyboard .key-wide {
+            width: 62%;
+        }
+        #numberKeyboard .key-extra-wide {
+            width: 98%;
+        }
         
     </style>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1386.0.min.js"></script>
@@ -360,6 +420,42 @@ body {
             <button id="cancelListButton">キャンセル</button>
         </div>
     </div>
+
+     <!-- アルファベットキーボード -->
+     <div id="alphabetKeyboard" class="keyboard">
+        <div class="keyboard-row">
+            <button class="key">Q</button><button class="key">W</button><button class="key">E</button><button class="key">R</button><button class="key">T</button><button class="key">Y</button><button class="key">U</button><button class="key">I</button><button class="key">O</button><button class="key">P</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">A</button><button class="key">S</button><button class="key">D</button><button class="key">F</button><button class="key">G</button><button class="key">H</button><button class="key">J</button><button class="key">K</button><button class="key">L</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">Z</button><button class="key">X</button><button class="key">C</button><button class="key">V</button><button class="key">B</button><button class="key">N</button><button class="key">M</button>
+            <button class="key key-wide">Backspace</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key key-extra-wide">完了</button>
+        </div>
+    </div>
+
+    <!-- 数字キーボード -->
+    <div id="numberKeyboard" class="keyboard">
+        <div class="keyboard-row">
+            <button class="key">1</button><button class="key">2</button><button class="key">3</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">4</button><button class="key">5</button><button class="key">6</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">7</button><button class="key">8</button><button class="key">9</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key">0</button>
+            <button class="key key-wide">Backspace</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key key-extra-wide">完了</button>
+        </div>
 
     <script>
         const cameraButton = document.getElementById('cameraButton');
@@ -699,6 +795,98 @@ hideCommentSection();
                 appInstructions.style.display = 'none';
             }
         }
+
+        // スクリーンキーボード関連の新しいコード
+        const alphabetKeyboard = document.getElementById('alphabetKeyboard');
+        const numberKeyboard = document.getElementById('numberKeyboard');
+        let currentKeyboard = null;
+        let currentInput = null;
+        let isEditingAlphabet = true;
+
+        function showKeyboard(keyboard, input) {
+            if (currentKeyboard) {
+                currentKeyboard.style.display = 'none';
+            }
+            keyboard.style.display = 'block';
+            currentKeyboard = keyboard;
+            currentInput = input;
+        }
+
+        function hideKeyboard() {
+            if (currentKeyboard) {
+                currentKeyboard.style.display = 'none';
+                currentKeyboard = null;
+                currentInput = null;
+            }
+        }
+
+        function handleKeyPress(key) {
+            if (!currentInput) return;
+
+            let currentValue = currentInput.value;
+            if (key === 'Backspace') {
+                if (currentInput === commonNumberInput && currentValue.endsWith('-')) {
+                    currentValue = currentValue.slice(0, -2);
+                    isEditingAlphabet = true;
+                    showKeyboard(alphabetKeyboard, commonNumberInput);
+                } else {
+                    currentValue = currentValue.slice(0, -1);
+                }
+            } else if (key === '完了') {
+                hideKeyboard();
+                return;
+            } else {
+                if (currentInput === commonNumberInput) {
+                    if (isEditingAlphabet) {
+                        if (currentValue.length < 2) {
+                            currentValue += key;
+                        }
+                        if (currentValue.length === 2) {
+                            currentValue += '-';
+                            isEditingAlphabet = false;
+                            showKeyboard(numberKeyboard, commonNumberInput);
+                        }
+                    } else {
+                        if (currentValue.length < 6) {
+                            currentValue += key;
+                        }
+                    }
+                } else if (currentInput === cycleNumberInput) {
+                    currentValue += key;
+                }
+            }
+            currentInput.value = currentValue;
+        }
+
+        alphabetKeyboard.addEventListener('click', function(e) {
+            if (e.target.classList.contains('key')) {
+                handleKeyPress(e.target.textContent);
+            }
+        });
+
+        numberKeyboard.addEventListener('click', function(e) {
+            if (e.target.classList.contains('key')) {
+                handleKeyPress(e.target.textContent);
+            }
+        });
+
+        // 軸受製番入力フィールドにスクリーンキーボードを追加
+        commonNumberInput.addEventListener('focus', function() {
+            isEditingAlphabet = this.value.length < 2;
+            showKeyboard(isEditingAlphabet ? alphabetKeyboard : numberKeyboard, this);
+        });
+
+        // 使用回数入力フィールドにスクリーンキーボードを追加
+        cycleNumberInput.addEventListener('focus', function() {
+            showKeyboard(numberKeyboard, this);
+        });
+
+        // オーバーレイをクリックしたときにキーボードを隠す
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                hideKeyboard();
+            }
+        });
 
     
     </script>
