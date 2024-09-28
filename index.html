@@ -805,17 +805,25 @@ hideCommentSection();
             keyboard.style.display = 'block';
             currentKeyboard = keyboard;
             currentInput = input;
+            
+            // スマートフォンのキーボードを隠す
+            input.setAttribute('readonly', 'readonly');
         }
 
         function hideKeyboard() {
             if (currentKeyboard) {
                 currentKeyboard.style.display = 'none';
                 currentKeyboard = null;
+                
+                // スマートフォンのキーボードを再び表示可能にする
+                if (currentInput) {
+                    currentInput.removeAttribute('readonly');
+                }
                 currentInput = null;
             }
         }
 
-        function handleKeyPress(key) {
+       function handleKeyPress(key) {
             if (!currentInput) return;
 
             let currentValue = currentInput.value;
@@ -882,6 +890,13 @@ hideCommentSection();
                 hideKeyboard();
             }
         });
+
+          // タッチデバイスでのスクロール防止
+          document.body.addEventListener('touchmove', function(e) {
+            if (currentKeyboard) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
     
     </script>
